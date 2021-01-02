@@ -1,0 +1,25 @@
+- name: Create user
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Add user
+      user:
+        name: "{{ account.user }}"
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+        password: "{{ account.password | password_hash('sha512', account.password_salt) }}"
+        update_password: on_create
+
+    - name: Prepare host for user switching
+      package:
+        name: acl
+        state: present
+
+    - name: Add authorized key
+      ansible.posix.authorized_key:
+        user: "{{ account.user }}"
+        state: present
+        key: "{{ account.pubkey }}"
