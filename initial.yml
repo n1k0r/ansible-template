@@ -13,8 +13,13 @@
         password: "{{ account.password | password_hash('sha512', account.password_salt) }}"
         update_password: on_create
 
+    - name: Upgrade packages
+      apt:
+        update_cache: yes
+        upgrade: "yes"
+
     - name: Prepare host for user switching
-      package:
+      apt:
         name: acl
         state: present
 
