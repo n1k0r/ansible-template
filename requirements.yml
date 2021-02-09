@@ -1,1 +1,2 @@
 - src: git+ssh://git@gitlab.com/n1k0r-ansible/roles/master
+  version: v1.0
