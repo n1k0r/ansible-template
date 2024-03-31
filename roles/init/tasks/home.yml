@@ -1,0 +1,13 @@
+- name: Hide motd for user
+  copy:
+    dest: /home/{{ user.user }}/.hushlogin
+    content: ""
+    owner: "{{ user.user }}"
+    group: "{{ user.user }}"
+
+- name: Tweak bashrc
+  lineinfile:
+    path: /home/{{ user.user }}/.bashrc
+    line: "{{ item }}"
+  loop:
+    - alias l="ls -lah"

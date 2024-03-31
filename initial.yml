@@ -5,13 +5,26 @@
 
   tasks:
     - name: Add user
+      tags: [ users ]
+      loop: "{{ users }}"
+      loop_control:
+        label: "{{ item.user }}"
       user:
-        name: "{{ account.user }}"
+        name: "{{ item.user }}"
         shell: /bin/bash
         groups: sudo
         append: yes
-        password: "{{ account.password | password_hash('sha512', account.password_salt) }}"
-        update_password: on_create
+        password: "{{ item.password_hash }}"
+
+    - name: Add authorized key
+      tags: [ users ]
+      loop: "{{ users | subelements('pubkeys') }}"
+      loop_control:
+        label: "{{ item.0.user }}"
+      authorized_key:
+        user: "{{ item.0.user }}"
+        state: present
+        key: "{{ item.1 }}"
 
     - name: Upgrade packages
       apt:
@@ -22,9 +35,3 @@
       apt:
         name: acl
         state: present
-
-    - name: Add authorized key
-      ansible.posix.authorized_key:
-        user: "{{ account.user }}"
-        state: present
-        key: "{{ account.pubkey }}"

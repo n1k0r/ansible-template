@@ -1,0 +1,10 @@
+account: "{{ (users | selectattr('user', 'equalto', local.user)).0 }}"
+ansible_user: "{{ account.user }}"
+ansible_become_pass: "{{ local.password }}"
+
+# get password hash with `openssl passwd -6`
+users:
+  - user: username
+    password_hash: $6$/z.ijnhl6R.NvGgO$BwMAu/Il/vUIxf4Ad8eFlTft7hyxpWOJcke5xXb1kBPSoXtHizZgZm9lOeUvLomeSnWCQVXSB3ght42kf9mx5/
+    pubkeys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEPE2tkjTctdjjxO9uBJEebI/l5Y9vMC1z/SqIHWM2pN

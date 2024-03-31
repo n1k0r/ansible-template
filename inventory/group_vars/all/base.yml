@@ -1,7 +1,0 @@
-account:
-  user: master
-  password: masterpass
-  password_salt: writeheresomething
-  pubkey: "{{ lookup('file', '~/.ssh/key.pub') }}"
-
-services_path: /srv

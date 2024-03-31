@@ -1,0 +1,36 @@
+- block:
+    - name: Configure user
+      include_tasks: home.yml
+      loop: "{{ users }}"
+      loop_control:
+        loop_var: user
+        label: "{{ user.user }}"
+  become: yes
+
+- name: Install user tools
+  package:
+    name:
+      - curl
+      - dnsutils
+      - htop
+      - iftop
+      - iputils-ping
+      - mtr-tiny
+      - net-tools
+      - tcpdump
+      - vim
+    state: present
+  become: yes
+
+- name: Configure ssh
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regex: "{{ item.regex }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regex: "^(# *)?PasswordAuthentication", line: "PasswordAuthentication no" }
+    - { regex: "^(# *)?PermitRootLogin", line: "PermitRootLogin no" }
+    - { regex: "^(# *)?AllowUsers", line: "AllowUsers {{ (users | map(attribute='user') + ssh_allow_users | default([])) | join(' ') }}" }
+  become: yes
+  notify:
+    - Restart sshd

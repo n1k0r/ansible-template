@@ -1,3 +1,9 @@
-- hosts: all
+- name: Initialize hosts
+  hosts: all
+  tags: [ init ]
   roles:
-    - master
+    - init
+  tasks:
+    - name: Set timezone
+      timezone:
+        name: Etc/UTC
